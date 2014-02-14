@@ -1,0 +1,76 @@
+<html>
+<head>
+<title>Heartphones [Susse + Alex]</title>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>  
+<script src="http://d23cj0cdvyoxg0.cloudfront.net/cosmjs-1.0.0.min.js"></script>  
+
+</head>
+<body>
+<script type="text/javascript"> 
+ // Make sure the document is ready to be handled  
+
+$(document).ready(function($) {  
+
+window.resizeTo(200, 150);
+window.moveTo(0, 0);
+
+  // Set the Cosm API key (https://cosm.com/users/YOUR_USERNAME/keys)  
+  cosm.setKey( "s5G_p9FMnRRrTezCwJBwJYpIFRySAKxmUDJnRC85aGlNQT0g" );  
+  
+  // Replace with your own values  
+  var feedID        = 119377,          // Feed ID  
+      datastreamID  = "1";       // Datastream ID  
+      selector      = "0";   // Your element on the page 
+      restingHeart  = "4"; //resting heartBeat 
+      
+      lowHeart      = restingHeart * 0.5;  //minimum hB
+      midHeart      = restingHeart * 1.2;  //middle-range hB threshold
+      highHeart     = restingHeart * 1.5;;  //high-range hB threshold
+
+
+
+  
+  // Get datastream data from Cosm  
+  cosm.datastream.get (feedID, datastreamID, function ( datastream ) {  
+
+  //setUpBackground
+  function changeBackground(color) {
+  document.body.style.background = color;
+  }
+
+  
+
+  //Get heartBeat
+  var heartBeat  = datastream.current_value;
+
+  
+
+  if(heartBeat > lowHeart && heartBeat <= midHeart){
+      console.log(heartBeat);
+      changeBackground('green');
+  }
+
+  if(heartBeat > midHeart && heartBeat <=highHeart){
+    console.log(heartBeat);
+    changeBackground('yellow');
+  }
+
+  if(heartBeat > highHeart){
+    console.log(heartBeat);
+    changeBackground('red');
+    window.open("http://www.calm.com","_blank","toolbar=yes, location=yes, directories=no, status=no, menubar=no, scrollbars=yes, resizable=no, width=1440, height=900");
+  }
+
+
+
+
+
+  });  
+
+});  
+
+</script> 
+
+
+</body>

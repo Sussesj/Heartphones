@@ -1,0 +1,171 @@
+<html>
+<head>
+<title>Heartphones [Susse + Alex]</title>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>  
+<script src="http://d23cj0cdvyoxg0.cloudfront.net/cosmjs-1.0.0.min.js"></script>  
+
+</head>
+<body>
+<script type="text/javascript"> 
+
+
+ // Make sure the document is ready to be handled  
+ $(document).ready(function($) {  
+
+  
+//get age
+var ageVar;
+var lowAlert;
+var highAlert; 
+window.onload = function myAge()
+  {
+    var myAge=prompt("Welcome! Enter your age to get started.", 30);
+    ageVar = parseFloat(myAge);
+
+    console.log("is age NaN? " + isNaN(ageVar));
+    calcNumbers();
+    //if age is null, then TK
+  }
+
+  //resize + reposition
+  //window.resizeTo(200, 150);
+  window.moveTo(0, 0);
+
+
+  // Set the Cosm API key (https://cosm.com/users/YOUR_USERNAME/keys)  
+  cosm.setKey( "s5G_p9FMnRRrTezCwJBwJYpIFRySAKxmUDJnRC85aGlNQT0g" );  
+
+
+  // All heart rate based on (based on http://bit.ly/ZQfTpz)
+  var feedID        = 120070,          // Feed ID  
+      datastreamID  = "BPM";       // Datastream ID  
+
+  function calcNumbers()
+    {
+      age           = ageVar;
+      console.log(age);
+      restingHeart  = 90;
+      maxHeart      = (206.9 - (0.67 * age));
+      heartRateRes  = (maxHeart - restingHeart);
+      trainRangePer = (heartRateRes * .5);
+  
+    }
+
+
+ // Get datastream data from Cosm  
+ // cosm.datastream.get (feedID, datastreamID, function ( datastream ) {  
+   cosm.datastream.subscribe( feedID, datastreamID, function ( event , datastream_updated ) {  
+
+
+
+//------
+
+  // //Get heartBeat + calculate values
+  // var heartBeat = datastream.current_value;
+  // restingHeart  =  restingHeart; //switch to resting heart rate when available
+  // lowHeart      = (restingHeart - 10);  //minimum hB
+  // midHeart      = (trainRangePer + restingHeart);  //middle-range hB threshold
+  // highHeart     = (maxHeart - 30); //high-range hB threshold 
+
+  //Get heartBeat LIVE + calculate values
+  var heartBeat  = datastream_updated.current_value;
+  restingHeart = restingHeart;
+  lowHeart      = (restingHeart - 10);  //minimum hB
+  midHeart      = ((trainRangePer + restingHeart) - 20);  //middle-range hB threshold
+  highHeart     = (maxHeart - 30); //high-range hB threshold 
+
+
+
+  //print values
+  console.log("age: " + age);
+  console.log("resting heart rate: " + restingHeart);
+  console.log("max heart rate: " + maxHeart);
+  console.log("low threshold: " + lowHeart);
+  console.log("high threshold: " + highHeart);
+  console.log("mid threshold: " + midHeart);
+  
+//------
+
+//timed functions
+function tooLow()
+  {
+    window.clearTimeout(lowAlert)
+    window.alert("woah! your heart rate has been too low for too long. quick! do some desk dancing.");
+    var randomNum = Math.floor(Math.random() * (6 - 1 + 1)) + 1;
+    console.log(randomNum);
+    
+    if(randomNum == 1){
+    window.open("http://localhost:8888/midterm/musicVideo1.html","_blank","toolbar=yes, location=yes, directories=no, status=no, menubar=no, scrollbars=yes, resizable=no, width=1300, height=740");
+    }
+    if(randomNum == 2){
+    window.open("http://localhost:8888/midterm/musicVideo2.html","_blank","toolbar=yes, location=yes, directories=no, status=no, menubar=no, scrollbars=yes, resizable=no, width=980, height=740");
+    }
+    if(randomNum == 3){
+    window.open("http://localhost:8888/midterm/musicVideo3.html","_blank","toolbar=yes, location=yes, directories=no, status=no, menubar=no, scrollbars=yes, resizable=no, width=1300, height=740");
+    }
+    if(randomNum == 4){
+    window.open("http://localhost:8888/midterm/musicVideo4.html","_blank","toolbar=yes, location=yes, directories=no, status=no, menubar=no, scrollbars=yes, resizable=no, width=980, height=740");
+    }
+    else{
+    window.open("http://localhost:8888/midterm/musicVideo5.html","_blank","toolbar=yes, location=yes, directories=no, status=no, menubar=no, scrollbars=yes, resizable=no, width=1300, height=740");
+    } 
+  }
+
+function tooHigh()
+  {
+    window.alert("your heart rate has been too high for too long! do a two-minute meditation and try to relax.")
+    window.open("http://www.calm.com","_blank","toolbar=yes, location=yes, directories=no, status=no, menubar=no, scrollbars=yes, resizable=no, width=screen.width, height=screen.height");
+    window.clearTimeout(highAlert)
+ }
+
+
+//------
+
+
+//setUpBackground
+function changeBackground(color) {
+document.body.style.background = color;
+}
+
+//change background + action  
+
+if(heartBeat > lowHeart && heartBeat <= midHeart)
+ // if(heartBeat > midHeart && heartBeat <=highHeart)
+    {
+      console.log("current BPM: " + heartBeat);
+      changeBackground('blue');
+      window.clearTimeout(highAlert)
+      lowAlert = setTimeout(tooLow, 60000);
+    }
+
+
+if(heartBeat > midHeart && heartBeat <=highHeart)
+  {
+    console.log("current BPM: " + heartBeat);
+    changeBackground('mediumpurple');
+    window.clearTimeout(lowAlert)
+    window.clearTimeout(highAlert)
+  }
+
+
+ if(heartBeat > highHeart)
+  //if(heartBeat > midHeart && heartBeat <=highHeart)
+  {
+    console.log("current BPM: " + heartBeat);
+    changeBackground('red');
+    window.clearTimeout(lowAlert)
+    highAlert = setTimeout(tooHigh, 60000);    
+  }
+
+
+
+  });  
+
+});  
+
+</script> 
+
+
+
+</body>
